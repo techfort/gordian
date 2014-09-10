@@ -32,13 +32,36 @@ function Test(title, result, message) {
 module.exports = function (testGroup) {
 	var hub = new TestHub(testGroup);
 	this.assertEqual = function (title, expected, actual, message) {
-		var result = (expected == actual);
+		var result;
+		if (typeof actual === 'object') {
+			if (Array.isArray(actual)) {
+				var i = 0,
+					len = actual.length,
+					result = true;
+				for (i; i < len; i += 1) {
+					if (actual[i] != expected[i]) {
+						result = false;
+						break;
+					}
+				}
+			} else {
+				result = (JSON.stringify(expected) == JSON.stringify(actual));
+			}
+
+		} else {
+			result = (expected == actual);
+		}
+
 		hub.addResult(Test(title, result, message));
 	};
 
 	this.assertStrictEqual = function (title, expected, actual, message) {
 		var result = (expected === actual);
 		hub.addResult(Test(title, result, message));
+	};
+
+	this.assertNotEqual = function (title, expected, actual, message) {
+		return !(this.assertStrictEqual(title, expected, actual, message));
 	};
 
 	this.assertNotEqual = function (title, expected, actual, message) {
