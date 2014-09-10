@@ -60,8 +60,9 @@ module.exports = function (testGroup) {
 		hub.addResult(Test(title, result, message));
 	};
 
-	this.assertStrictNotEqual = function (title, expected, actual, message) {
-		return !(this.assertStrictEqual(title, expected, actual, message));
+	this.assertNotStrictEqual = function (title, expected, actual, message) {
+		var result = (expected !== actual);
+		hub.addResult(Test(title, result, message));
 	};
 
 	this.assertNotEqual = function (title, expected, actual, message) {
