@@ -17,7 +17,7 @@ function TestHub(testGroupName) {
 			console.log(chalk[test.result ? 'green' : 'red'](test.title + ': ' + test.result + '. Message: ' + test.message));
 		});
 
-		console.log(chalk[fails > 0 ? 'red' : ' green']('Test completed: ' + tests.length + '. Passes: ' + successes + ', fails: ' + fails));
+		console.log(chalk[fails > 0 ? 'red' : 'green']('Test completed: ' + tests.length + '. Passes: ' + successes + ', fails: ' + fails));
 	};
 }
 
