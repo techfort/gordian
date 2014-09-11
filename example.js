@@ -9,7 +9,27 @@ var o = {
   n: 2
 };
 suite.assertEqual('Equality', o, o);
+suite.assertEqual('Array', [1, 2], [1, 2]);
+suite.assertStrictEqual('Array Strict', [1, 2], [1, 2]);
+suite.assertEqual('Object array', [{
+  name: 'joe'
+}], [{
+  name: 'joe'
+}]);
 
+suite.assertDeepEqual('Object array deep', [{
+  name: 'joe'
+}], [{
+  name: 'joe'
+}]);
+
+suite.assertEqual('Object array strict', [{
+  name: 'joe'
+}], [{
+  name: 'joe'
+}]);
+suite.assertEqual('Falsy', null, undefined);
+suite.assertStrictEqual('Falsy strict', null, undefined);
 suite.assertStrictEqual('Srtict Equality', o, o, 'Strict equality passed');
 suite.assertStrictEqual('Strict Equality', o, {
   a: 1,
@@ -18,4 +38,5 @@ suite.assertStrictEqual('Strict Equality', o, {
 suite.assertThrows('Throws', function () {
   throw new TypeError;
 }, TypeError);
+
 suite.report();

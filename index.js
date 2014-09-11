@@ -1,4 +1,5 @@
-var chalk = require('chalk');
+var chalk = require('chalk'),
+	deepEqual = require('deep-equal');
 
 function TestHub(testGroupName) {
 	var tests = [];
@@ -52,6 +53,18 @@ module.exports = function (testGroup) {
 			result = (expected == actual);
 		}
 
+		hub.addResult(Test(title, result, message));
+	};
+
+	this.assertDeepEqual = function (title, expected, actual, message) {
+		var result = deepEqual(expected, actual);
+		hub.addResult(Test(title, result, message));
+	};
+
+	this.assertStrictDeepEqual = function () {
+		var result = deepEqual(expected, actual, {
+			strict: true
+		});
 		hub.addResult(Test(title, result, message));
 	};
 
