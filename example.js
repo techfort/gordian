@@ -39,4 +39,6 @@ suite.assertThrows('Throws', function () {
   throw new TypeError;
 }, TypeError);
 
-suite.report();
+suite.report(function () {
+  console.log('completed.');
+});

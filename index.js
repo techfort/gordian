@@ -114,7 +114,7 @@ module.exports = function (testGroup) {
 		hub.addResult(Test(title, result, message, process.hrtime(start)));
 	};
 
-	this.report = function () {
-		hub.report();
+	this.report = function (cb) {
+		hub.report(cb);
 	};
 };
