@@ -115,7 +115,7 @@ module.exports = function (testGroup) {
 			}
 
 		} else {
-			result = (expected == actual);
+			result = (expected != actual);
 		}
 
 		hub.addResult(Test(title, result, message));
