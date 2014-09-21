@@ -98,9 +98,27 @@ module.exports = function (testGroup) {
 	};
 
 	this.assertNotEqual = function (title, expected, actual, message) {
-		var start = process.hrtime(),
-			result = (expected != actual);
-		hub.addResult(Test(title, result, message, process.hrtime(start)));
+		var result;
+		if (typeof actual === 'object') {
+			if (Array.isArray(actual)) {
+				var i = 0,
+					len = actual.length,
+					result = false;
+				for (i; i < len; i += 1) {
+					if (actual[i] != expected[i]) {
+						result = true;
+						break;
+					}
+				}
+			} else {
+				result = (JSON.stringify(expected) == JSON.stringify(actual));
+			}
+
+		} else {
+			result = (expected == actual);
+		}
+
+		hub.addResult(Test(title, result, message));
 	};
 
 	this.assertThrows = function (title, func, type, message) {
