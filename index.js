@@ -98,7 +98,7 @@ module.exports = function (testGroup) {
 	};
 
 	this.assertNotEqual = function (title, expected, actual, message) {
-		var result;
+		var result, start = process.hrtime();
 		if (typeof actual === 'object') {
 			if (Array.isArray(actual)) {
 				var i = 0,
@@ -118,7 +118,7 @@ module.exports = function (testGroup) {
 			result = (expected != actual);
 		}
 
-		hub.addResult(Test(title, result, message));
+		hub.addResult(Test(title, result, message, process.hrtime(start)));
 	};
 
 	this.assertThrows = function (title, func, type, message) {
