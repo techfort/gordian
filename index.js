@@ -21,8 +21,11 @@ function TestHub(testGroupName) {
 				's, ' + (test.exec[1] / 1000000) + 'ms] Message: ' + chalk.bold(test.message)));
 			console.log(chalk[test.result ? 'green' : 'red'](new Array(output.length - 8).join('-')));
 		});
-		console.log(chalk[fails > 0 ? 'red' : 'green']('Test completed: ' + tests.length + '. Passes: ' + successes + ', fails: ' + fails));
-
+		console.log(chalk[fails > 0 ? 'red' : 'green']('Test group ' + testGroupName + ' completed: ' + tests.length + '. Passes: ' + successes + ', fails: ' + fails));
+		var result = {
+			passes: successes,
+			fails: fails
+		};
 		// if there's a cb pass tests 
 		// this is presumably for emailing test results etc.
 		if (cb) {
@@ -30,19 +33,20 @@ function TestHub(testGroupName) {
 		} else {
 			console.log('Done.');
 		}
+		return result;
 	};
 }
 
-function Test(title, result, message, exec) {
+function Test(title, result, message, exec, expected, actual) {
 	return {
 		title: title,
 		result: result,
-		message: message || (result ? 'Test passed' : 'Test failed.'),
+		message: message || (result ? 'Test passed' : 'Test failed, expected ' + expected + ', got ' + actual),
 		exec: exec
 	};
 }
 
-module.exports = function (testGroup) {
+module.exports = function (testGroup, root /* the module */ ) {
 	var hub = new TestHub(testGroup);
 	this.assertEqual = function (title, expected, actual, message) {
 
@@ -65,7 +69,7 @@ module.exports = function (testGroup) {
 			result = (expected == actual);
 		}
 
-		hub.addResult(Test(title, result, message, process.hrtime(start)));
+		hub.addResult(Test(title, result, message, process.hrtime(start), expected, actual));
 	};
 
 
@@ -73,7 +77,7 @@ module.exports = function (testGroup) {
 	this.assertDeepEqual = function (title, expected, actual, message) {
 		var start = process.hrtime(),
 			result = deepEqual(expected, actual);
-		hub.addResult(Test(title, result, message, process.hrtime(start)));
+		hub.addResult(Test(title, result, message, process.hrtime(start), expected, actual));
 	};
 
 	this.assertStrictDeepEqual = function () {
@@ -82,23 +86,24 @@ module.exports = function (testGroup) {
 			result = deepEqual(expected, actual, {
 				strict: true
 			});
-		hub.addResult(Test(title, result, message, process.hrtime(start)));
+		hub.addResult(Test(title, result, message, process.hrtime(start), expected, actual));
 	};
 
 	this.assertStrictEqual = function (title, expected, actual, message) {
 		var start = process.hrtime(),
 			result = (expected === actual);
-		hub.addResult(Test(title, result, message, process.hrtime(start)));
+		hub.addResult(Test(title, result, message, process.hrtime(start), expected, actual));
 	};
 
 	this.assertNotStrictEqual = function (title, expected, actual, message) {
 		var start = process.hrtime(),
 			result = (expected !== actual);
-		hub.addResult(Test(title, result, message, process.hrtime(start)));
+		hub.addResult(Test(title, result, message, process.hrtime(start), expected, actual));
 	};
 
 	this.assertNotEqual = function (title, expected, actual, message) {
-		var result;
+		var start = process.hrtime(),
+			result;
 		if (typeof actual === 'object') {
 			if (Array.isArray(actual)) {
 				var i = 0,
@@ -118,7 +123,7 @@ module.exports = function (testGroup) {
 			result = (expected == actual);
 		}
 
-		hub.addResult(Test(title, result, message));
+		hub.addResult(Test(title, result, message, process.hrtime(start), expected, actual));
 	};
 
 	this.assertThrows = function (title, func, type, message) {
@@ -129,10 +134,12 @@ module.exports = function (testGroup) {
 		} catch (err) {
 			result = (err instanceof type);
 		}
-		hub.addResult(Test(title, result, message, process.hrtime(start)));
+		hub.addResult(Test(title, result, message, process.hrtime(start), expected, actual));
 	};
 
 	this.report = function (cb) {
-		hub.report(cb);
+		var report = hub.report(cb);
+		(root).exports = report;
+		return report;
 	};
 };
