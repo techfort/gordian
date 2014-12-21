@@ -102,8 +102,12 @@ module.exports = function (testGroup, root /* the module */ ) {
 	};
 
 	this.assertNotEqual = function (title, expected, actual, message) {
+<<<<<<< HEAD
 		var start = process.hrtime(),
 			result;
+=======
+		var result, start = process.hrtime();
+>>>>>>> 60a4082718582e0237a45c506d058d6edeb79926
 		if (typeof actual === 'object') {
 			if (Array.isArray(actual)) {
 				var i = 0,
@@ -120,10 +124,14 @@ module.exports = function (testGroup, root /* the module */ ) {
 			}
 
 		} else {
-			result = (expected == actual);
+			result = (expected != actual);
 		}
 
+<<<<<<< HEAD
 		hub.addResult(Test(title, result, message, process.hrtime(start), expected, actual));
+=======
+		hub.addResult(Test(title, result, message, process.hrtime(start)));
+>>>>>>> 60a4082718582e0237a45c506d058d6edeb79926
 	};
 
 	this.assertThrows = function (title, func, type, message) {
